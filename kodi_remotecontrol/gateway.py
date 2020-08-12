@@ -10,16 +10,21 @@ from kodi_remotecontrol import eventclient
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG)
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--destport", type=int, default=9777, help="destination backend udp port default=9777")
-parser.add_argument("--desthost", type=str, default="127.0.0.1", help="destination backend host address default=127.0.0.1"), 
-parser.add_argument("--bindport", type=int, default=8081, help="bind on port default=8081")
-parser.add_argument("--bindhost", type=str, default="0.0.0.0", help="bind on host default=0.0.0.0")
+parser.add_argument("--destport", type=int, default=9777,
+                    help="destination backend udp port default=9777")
+parser.add_argument("--desthost", type=str, default="127.0.0.1",
+                    help="destination backend host address default=127.0.0.1"),
+parser.add_argument("--bindport", type=int, default=8081,
+                    help="bind on port default=8081")
+parser.add_argument("--bindhost", type=str, default="0.0.0.0",
+                    help="bind on host default=0.0.0.0")
 
 # parse provided arguments and logging
 args = parser.parse_args()
-logging.debug( args )
+logging.debug(args)
 
 eventapi = None
+
 
 async def handle_message(websocket, path):
     """handle websocket messages"""
@@ -41,6 +46,7 @@ async def handle_message(websocket, path):
     except Exception as e:
         logging.error("%s" % e)
 
+
 async def ping_eventserver():
     """send ping to kodi on eventserver api"""
     global eventapi
@@ -50,10 +56,12 @@ async def ping_eventserver():
         logging.debug('ping to eventserver')
         await asyncio.sleep(50)
 
+
 async def wakeup_loop():
     """wakeup to accept keyboard interrupt"""
     while True:
         await asyncio.sleep(1)
+
 
 def start_remotecontrol():
     """start remote control"""
@@ -62,11 +70,12 @@ def start_remotecontrol():
     logging.info("Start websocket gateway...")
 
     # prepare the event client with destination ip/port provided
-    eventapi = eventclient.EventClient(api_host=args.desthost, 
+    eventapi = eventclient.EventClient(api_host=args.desthost,
                                        api_udp_port=args.destport)
 
     # prepare the websocket server
-    start_server = websockets.serve(handle_message, args.bindhost, args.bindport)
+    start_server = websockets.serve(
+        handle_message, args.bindhost, args.bindport)
 
     # get the main event loop
     eventloop = asyncio.get_event_loop()

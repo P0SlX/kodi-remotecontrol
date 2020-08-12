@@ -12,11 +12,12 @@ PT_PING = 0x05
 
 ACTION_EXECBUILTIN = b"\1"
 
+
 class EventClient:
     def __init__(self, api_host,
-                       api_udp_port=9777,
-                       api_http_port=8080
-                       ):
+                 api_udp_port=9777,
+                 api_http_port=8080
+                 ):
         """event client class"""
         self.api_host = api_host
         self.api_udp_port = api_udp_port
@@ -47,21 +48,25 @@ class EventClient:
                     # send ping to kodi jsonrpc api
                     logging.debug("Pinging backend...")
                     r = requests.post(url=api_url, json=p)
-                    
+
                     if r.status_code == 200:
-                        logging.debug("Backend response: %s" % r.json()['result'])
+                        logging.debug("Backend response: %s" %
+                                      r.json()['result'])
                     elif r.status_code == 401:
-                        logging.debug("Got an unauthorized response, make sure you don't have a password for the Web Server")
+                        logging.debug(
+                            "Got an unauthorized response, make sure you don't have a password for the Web Server")
                     else:
-                        logging.debug("Got code: %i from backend, continuing..." % r.status_code)
-                    
+                        logging.debug(
+                            "Got code: %i from backend, continuing..." % r.status_code)
+
                     kodi_ready = True
                 except requests.exceptions.ConnectionError:
-                    logging.debug("Failed to ping backend, make sure that Kodi is running. Retrying in 10 sec")
+                    logging.debug(
+                        "Failed to ping backend, make sure that Kodi is running. Retrying in 10 sec")
                     time.sleep(10)
 
         if timeout_raised:
-            raise Exception( "Backend api not ready ?" )
+            raise Exception("Backend api not ready ?")
 
         if kodi_ready:
             logging.debug("Backend is ready")
@@ -76,7 +81,7 @@ class EventClient:
         seq = 1
         maxseq = 1
 
-        return sig + struct.pack('!2B H L L H L 10B',  
+        return sig + struct.pack('!2B H L L H L 10B',
                                  *ver,
                                  ptype,
                                  seq,
@@ -85,7 +90,7 @@ class EventClient:
                                  uid,
                                  *reserved)
 
-    def send_packet(self, pkt):  
+    def send_packet(self, pkt):
         """connect to event servers and send packet"""
         addr = (self.api_host, self.api_udp_port)
         self.sock.sendto(pkt, addr)
@@ -100,7 +105,8 @@ class EventClient:
         reserved1 = 0
         reserved2 = 0
 
-        pkt_helo = device_name + struct.pack('!cHII', icon_type, port_no, reserved1, reserved2)
+        pkt_helo = device_name + \
+            struct.pack('!cHII', icon_type, port_no, reserved1, reserved2)
         pkt_header = self.get_header(psize=len(pkt_helo),
                                      ptype=PT_HELO)
 
@@ -148,15 +154,15 @@ class EventClient:
 
     def press_pause(self):
         """press pause button"""
-        self.send_action(msg="Action(Pause)") 
+        self.send_action(msg="Action(Pause)")
 
     def press_stop(self):
         """press stop button"""
-        self.send_action(msg="Action(Stop)") 
+        self.send_action(msg="Action(Stop)")
 
     def press_osd(self):
         """press osd button"""
-        self.send_action(msg="Action(OSD)") 
+        self.send_action(msg="Action(OSD)")
 
     def press_playlist(self):
         """press playlist button"""
@@ -164,48 +170,52 @@ class EventClient:
 
     def press_next(self):
         """press next button"""
-        self.send_action(msg="Action(SkipNext)") 
+        self.send_action(msg="Action(SkipNext)")
 
     def press_previous(self):
         """press previous button"""
-        self.send_action(msg="Action(SkipPrevious)") 
+        self.send_action(msg="Action(SkipPrevious)")
 
     def press_left(self):
         """press left button"""
-        self.send_action(msg="Action(Left)") 
+        self.send_action(msg="Action(Left)")
 
     def press_right(self):
         """press right button"""
-        self.send_action(msg="Action(Right)") 
+        self.send_action(msg="Action(Right)")
 
     def press_up(self):
         """press up button"""
-        self.send_action(msg="Action(Up)")  
+        self.send_action(msg="Action(Up)")
 
     def press_down(self):
         """press down button"""
-        self.send_action(msg="Action(Down)")  
+        self.send_action(msg="Action(Down)")
 
     def press_enter(self):
         """press enter button"""
-        self.send_action(msg="Action(Select)")  
+        self.send_action(msg="Action(Select)")
 
     def press_back(self):
         """press back button"""
-        self.send_action(msg="Action(Back)")  
+        self.send_action(msg="Action(Back)")
 
     def press_ctxmenu(self):
         """press contextual menu button"""
-        self.send_action(msg="Action(ContextMenu)")  
+        self.send_action(msg="Action(ContextMenu)")
 
     def press_logoff(self):
         """press logoff button"""
-        self.send_action(msg="System.LogOff")  
+        self.send_action(msg="System.LogOff")
 
     def press_subtitle(self):
         """press subtitle button"""
-        self.send_action(msg="Action(NextSubtitle)")  
+        self.send_action(msg="Action(NextSubtitle)")
 
     def press_language(self):
         """press language button"""
-        self.send_action(msg="Action(AudioNextLanguage)")  
+        self.send_action(msg="Action(AudioNextLanguage)")
+
+    def press_refresh_library(self):
+        """Refresh video library (TV shows / Movies)"""
+        self.send_action(msg="Action(UpdateLibrary(video))")
