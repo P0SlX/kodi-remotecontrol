@@ -5,7 +5,7 @@ import VueNativeSock from 'vue-native-websocket'
 
 Vue.config.productionTip = false
 
-Vue.use(VueNativeSock, 'ws://192.168.1.31:8081', { reconnection: true, format: 'json'  })
+Vue.use(VueNativeSock, 'ws://192.168.1.49:8081', { reconnection: true, format: 'json'  })
 
 new Vue({
  vuetify,
